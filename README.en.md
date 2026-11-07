@@ -11,6 +11,10 @@ A plugin for DeepSeek Harness. It manages the column of panel entries in the top
 - License: MIT
 - Platform: Web (DSH Desktop and `dsh web` both use the Web shell)
 
+![Sidebar in use](docs/sidebar.png)
+
+The screenshot above is the real thing: three top-level categories ("常用", "创作", "其他"), with "其他" collapsed. "更多" below is the shell's own entry and stays untouched.
+
 ---
 
 ## Table of contents
