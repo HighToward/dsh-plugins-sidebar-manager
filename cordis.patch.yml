@@ -1,0 +1,7 @@
+# Bundle patch layer: this row mounts the package's main entry as the host half
+# (a plain Cordis plugin that only serves the settings document), and the
+# `dsh.client` declaration in package.json makes the web app load ./client.js
+# as the browser half that owns the sidebar work.
+- insert:
+    - id: plugins-sidebar-manager
+      name: 'dsh-plugins-sidebar-manager'

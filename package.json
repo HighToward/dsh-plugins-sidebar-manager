@@ -1,0 +1,56 @@
+{
+  "name": "dsh-plugins-sidebar-manager",
+  "version": "0.1.0",
+  "private": true,
+  "description": "插件侧栏管理：把 DSH 左上角侧栏的功能入口按一级/二级分类归位，并逐个显示或隐藏。设置里一份可调的面板清单。",
+  "type": "module",
+  "icon": "icon.svg",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./icon": "./icon.svg",
+    "./locale/en.json": "./locale/en.json",
+    "./locale/zh.json": "./locale/zh.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "locale/*.json"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.2.1-rc.2",
+    "react": "^18.3.1"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "sidebar",
+    "panel",
+    "organize"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HighToward/dsh-plugins-sidebar-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HighToward/dsh-plugins-sidebar-manager/issues"
+  },
+  "homepage": "https://github.com/HighToward/dsh-plugins-sidebar-manager#readme",
+  "license": "MIT"
+}
