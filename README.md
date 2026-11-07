@@ -75,16 +75,23 @@ DSH 的左上角侧栏是一个开放的插槽，叫 `sidebar.panellist`。任�
 
 ### 方式一：从 GitHub 安装
 
-在 DSH 的插件管理页面里填入仓库地址：
+在 DSH 的插件管理页面（侧栏的「插件」页）点安装，填入仓库地址：
 
 ```
 github:HighToward/dsh-plugins-sidebar-manager
 ```
 
-或者用命令行：
+或者用命令行，把同样的地址交给 profile 的包管理器：
 
 ```bash
-dsh plugin add github:HighToward/dsh-plugins-sidebar-manager
+dsh plugin --profile desktop add github:HighToward/dsh-plugins-sidebar-manager
+```
+
+也可以直接用 pnpm：
+
+```bash
+cd ~/.dsh/profiles/desktop
+pnpm add github:HighToward/dsh-plugins-sidebar-manager
 ```
 
 ### 方式二：从本地目录链接安装
@@ -308,7 +315,9 @@ React 在每次渲染时按 fiber 的位置重新插入自己的子节点。你�
 **依赖**
 
 - DSH `>= 0.2.1-rc.2`
-- React `^18.3.1`（用 `useSyncExternalStore`，React 18 起才有）
+- React 18 或更新（用了 `useSyncExternalStore`，React 18 起才有）
+
+插件本身没有运行时依赖。`react`、`@deepseek-ai/*` 这些都由 DSH 外壳在加载时注入（`client.js` 里的 `require` 拿到的是外壳给的模块表），所以 `peerDependencies` 只声明了一个 `react` 并标成 `optional`，安装时不会顺带装一份 React 或 DSH 本体。
 
 **已知边界**
 

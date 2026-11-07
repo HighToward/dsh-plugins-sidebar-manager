@@ -75,16 +75,23 @@ It does not modify any other plugin's code and does not require other plugins to
 
 ### Option 1: install from GitHub
 
-In the DSH plugin manager, enter the repository address:
+In the DSH plugin manager (the "Plugins" page in the sidebar), click install and enter the repository address:
 
 ```
 github:HighToward/dsh-plugins-sidebar-manager
 ```
 
-Or on the command line:
+Or on the command line, handing the same address to the profile's package manager:
 
 ```bash
-dsh plugin add github:HighToward/dsh-plugins-sidebar-manager
+dsh plugin --profile desktop add github:HighToward/dsh-plugins-sidebar-manager
+```
+
+Or straight through pnpm:
+
+```bash
+cd ~/.dsh/profiles/desktop
+pnpm add github:HighToward/dsh-plugins-sidebar-manager
 ```
 
 ### Option 2: link a local directory
@@ -308,7 +315,9 @@ The whole enhancement runs inside `try / catch`. A failure logs one `[plugins-si
 **Requirements**
 
 - DSH `>= 0.2.1-rc.2`
-- React `^18.3.1` (it uses `useSyncExternalStore`, available from React 18)
+- React 18 or newer (it uses `useSyncExternalStore`, available from React 18)
+
+The plugin has no runtime dependencies of its own. `react` and the `@deepseek-ai/*` packages are injected by the DSH shell when it loads the module (the `require` inside `client.js` resolves against the shell's module table), so `peerDependencies` declares only `react`, marked `optional`. Installing the plugin does not pull a second copy of React or of DSH itself.
 
 **Known boundaries**
 
