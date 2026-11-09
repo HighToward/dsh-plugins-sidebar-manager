@@ -21,7 +21,9 @@
     "README.md",
     "README.en.md",
     "LICENSE",
+    "screenshots.json",
     "docs/*.png",
+    "assets/*.png",
     "locale/*.json"
   ],
   "dsh": {
