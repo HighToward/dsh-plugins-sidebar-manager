@@ -362,6 +362,28 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * Test one CSS-module class on an element, tolerating the build's hash
+     * prefix. The shell compiles its styles as CSS modules, so `panelRow` ships
+     * as `wtg9ga_panelRow`: the local name survives, the prefix does not stay
+     * put across releases. Matching the suffix of one class token keeps the
+     * check honest without pinning a hash that changes on every build.
+     * @param element - the element to inspect.
+     * @param name - the CSS-module local name, such as `panelRow`.
+     * @returns whether the element carries that class.
+     */
+    function hasCssClass(element, name) {
+      const value = element.className;
+      // SVG elements expose `className` as an object, not a string.
+      const text = typeof value === 'string' ? value : (value?.baseVal ?? '');
+      if (typeof text !== 'string' || text === '') return false;
+      const suffix = `_${name}`;
+      for (const token of text.split(/\s+/)) {
+        if (token === name || token.endsWith(suffix)) return true;
+      }
+      return false;
+    }
+
+    /**
      * Read the panels the shell knows about. Labels resolve through the same
      * thunk the shell used, so the text matches the row's `aria-label`.
      * @param ctx - the client context.
@@ -405,10 +427,11 @@ window.__ModuleLoader__.load({
       for (const nav of document.querySelectorAll('nav')) {
         let score = 0;
         for (const child of nav.children) {
-          if (child.tagName !== 'BUTTON') continue;
           if (child.hasAttribute('data-cem-group')) continue;
-          if (child.getAttribute('aria-haspopup') === 'menu') continue;
-          if (labels.has(child.getAttribute('aria-label') ?? '')) score += 1;
+          const button = rowButtonOf(child);
+          if (button === null) continue;
+          if (button.getAttribute('aria-haspopup') === 'menu') continue;
+          if (labels.has(button.getAttribute('aria-label') ?? '')) score += 1;
         }
         if (score > bestScore) {
           best = nav;
@@ -421,19 +444,27 @@ window.__ModuleLoader__.load({
     /**
      * Find the interactive row inside one direct child of the column.
      *
-     * The shell wraps each row in a `Tooltip`, which clones its child rather
-     * than adding an element, so today the child *is* the button. Reading it
-     * defensively anyway costs nothing and survives the day someone introduces
-     * a wrapper: the flex item is always the direct child, so that is what gets
-     * ordered and hidden, while the button is only used to read the label.
+     * Two shapes exist across releases. Up to 0.2.1 the shell handed the
+     * `Tooltip` a bare button, so the child *was* the button. From 0.2.2 the
+     * shell wraps the button in `div.panelEntry` and adds a second button
+     * beside it that unpins the entry, so a wrapper can hold more than one.
+     * The row is therefore the button that carries an `aria-label` and is not
+     * the unpin control, which is identified by its own class rather than by
+     * position or text.
      * @param slot - a direct child of the panel column.
-     * @returns the button, if this child is a panel row.
+     * @returns the row button, if this child is a panel row.
      */
     function rowButtonOf(slot) {
       if (slot.tagName === 'BUTTON') return slot;
-      const buttons = slot.querySelectorAll?.('button') ?? [];
-      if (buttons.length !== 1) return null;
-      return buttons[0];
+      const buttons = Array.from(slot.querySelectorAll?.('button') ?? []);
+      const candidates = buttons.filter((button) => !hasCssClass(button, 'panelUnpin'));
+      for (const button of candidates) {
+        if (hasCssClass(button, 'panelRow')) return button;
+      }
+      for (const button of candidates) {
+        if (button.getAttribute('aria-label') !== null) return button;
+      }
+      return null;
     }
 
     /**

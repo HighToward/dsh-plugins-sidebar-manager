@@ -7,7 +7,7 @@ English | [中文](README.md)
 A plugin for DeepSeek Harness. It manages the column of panel entries in the top-left corner of DSH: it sorts the buttons that other plugins put there into categories you define, allows a second level of nesting, and hides entries you never open. Everything is adjusted in Settings → Plugin Sidebar and applies immediately, with no restart.
 
 - Package: `dsh-plugins-sidebar-manager`
-- Version: `0.1.0`
+- Version: `0.1.1`
 - License: MIT
 - Platform: Web (DSH Desktop and `dsh web` both use the Web shell)
 
@@ -318,7 +318,7 @@ The whole enhancement runs inside `try / catch`. A failure logs one `[plugins-si
 
 **Requirements**
 
-- DSH `>= 0.2.1-rc.2`
+- DSH `>= 0.2.1-rc.2`, verified on `0.2.2-rc.2`
 - React 18 or newer (it uses `useSyncExternalStore`, available from React 18)
 
 The plugin has no runtime dependencies of its own. `react` and the `@deepseek-ai/*` packages are injected by the DSH shell when it loads the module (the `require` inside `client.js` resolves against the shell's module table), so `peerDependencies` declares only `react`, marked `optional`. Installing the plugin does not pull a second copy of React or of DSH itself.
@@ -326,6 +326,8 @@ The plugin has no runtime dependencies of its own. `react` and the `@deepseek-ai
 **Known boundaries**
 
 - The enhancement depends on the DOM the shell renders. If the shell changes the sidebar container tag (currently `nav`) or stops putting entry labels on `aria-label`, identification fails. The failure mode is the sidebar staying native: no error, no damage to anything else.
+- Since 0.2.2 the shell wraps each entry in a `div` and, in the wide state, adds an unpin button beside it in the same row. The plugin tells the main row from the unpin control by the CSS-module class suffix (`_panelRow` / `_panelUnpin`), not the hash prefix, so a rebuild on a new release still matches.
+- Since 0.2.2 an unpinned entry is not rendered in the sidebar at all; it moves into the More menu. Such an entry is absent from the DOM for that pass, so the plugin skips it and lays it out again once it returns.
 - Two entries with exactly the same display name are told apart by matching them in registration order. If registration order and render order disagree, they may be paired wrongly. This is rare among real plugins.
 - Entry labels come from each plugin's own `label` and follow the interface language. The plugin reads live labels, so it keeps matching after a language switch.
 - Group titles are nodes the plugin inserted; they are focusable buttons and work with the keyboard, but they do not participate in any special focus-loop handling.
